@@ -35,6 +35,10 @@ int create_semaphores(int sem_id, int nb_sem) {
   return ipc_id;
 }
 
+int get_semaphores(int sem_id) {
+  return semget(sem_id, 0, 0);
+}
+
 void operate_semaphore(int ipc_id, int num_sem, int op_sign) {
   struct sembuf op;
   op.sem_num = num_sem;
