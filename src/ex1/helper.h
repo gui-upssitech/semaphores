@@ -17,7 +17,7 @@ void parse_args(int argc, char *argv[], int *nb_messages, int *nb_lignes) {
   *nb_lignes = atoi(argv[2]);
 }
 
-void launch_processes(int nb_process, int ipc_id, int nb_messages, int nb_lignes) {
+void launch_processes_sync(int nb_process, int ipc_id, int nb_messages, int nb_lignes) {
   for (int i = 0; i < nb_process; i++) {
     // fork : création d'un processus fils
     switch (fork()) {
@@ -28,9 +28,7 @@ void launch_processes(int nb_process, int ipc_id, int nb_messages, int nb_lignes
         fils(i, ipc_id, nb_messages, nb_lignes);
     }
   }
-}
 
-void wait_for_processes(int nb_process) {
   for (int i = 0; i < nb_process; i++) {
     wait(NULL);
   }

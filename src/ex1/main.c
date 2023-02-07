@@ -27,8 +27,7 @@ int main (int argc, char *argv[]) {
 
   int ipc_id = create_semaphores(IPC_PRIVATE, N);
 
-  launch_processes(N, ipc_id, nb_messages, nb_lignes);
-  wait_for_processes(N);
+  launch_processes_sync(N, ipc_id, nb_messages, nb_lignes);
 
   destroy_semaphores(ipc_id);
 
