@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 #include "shm.h"
+#include "ipc.h"
 
 void parse_args(int argc, char *argv[], int *nb_process, int *process_id, int *tab_size) {
   if (argc != 4) {
@@ -26,21 +27,27 @@ int main(int argc, char *argv[]) {
     int shm_id = get_shared_memory(key);
     if(shm_id == -1) shm_id = create_shared_memory(key, size);
 
+    int ipc_id = get_semaphores(key);
+    if(ipc_id == -1) ipc_id = create_semaphores(key, nb_process);
+
     // Process
     int *tab = (int *) attach_shared_memory(shm_id);
 
-    for (int i = 0; i < tab_size; i++) {
-        tab[i] += 1;
-    }
+    P(ipc_id, process_id);
+
+    for (int i = 0; i < tab_size; i++) tab[i] += 1;
 
     printf("Processus %d: ", process_id);
     for (int i = 0; i < tab_size; i++) printf("%d ", tab[i]);
     printf("\n");
+
+    V(ipc_id, (process_id + 1) % nb_process);
     // Process end
 
     // Cleanup
     if (process_id == nb_process - 1) {
         destroy_shared_memory(shm_id);
+        destroy_semaphores(ipc_id);
     }    
 
     return 0;
